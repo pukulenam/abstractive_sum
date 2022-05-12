@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static', filename='Pukulenam.png') }}" type="image/png">
     <title>History</title>
+    <style>
+      .m-50{
+        margin: 50px;
+
+      }
+    </style>
     
 </head>
 <body>
@@ -50,6 +56,8 @@
       {% endfor %}
     </tbody>
     </table>
+
+      <a class="btn btn-primary btn-lg float-right m-50" href="/export" role="button">Export to CSV</a>
     
 </body>
 </html>
