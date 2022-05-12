@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}"> -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <!-- <link rel="stylesheet" href="style.css">   -->
+    <!-- <link rel="stylesheet" href="https://daemonite.github.io/material/css/material.min.css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='Pukulenam.png') }}" type="image/png">
+    <title>Abstractive Summerization</title>
+    <style>
+      body {
+        background-color: #e9ecef;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <img src="{{ url_for('static', filename='Pukulenam.png') }}" style="width: 30px; margin-right: 5px;">
+      <a class="navbar-brand" href="/">Pukul Enam</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          {% set active_page = 'index' %}
+          <li class="nav-item {{ 'active' if active_page=='index' else ''}}">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/history"> History</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+      <div class="jumbotron">
+        <form action="/" method="POST">
+          <div class="row">
+            <div class="col-md">
+              <h3>Input News</h3>
+                <textarea class="form-control textarea-autosize" name="inputNews" autofocus="autofocus" id="inputNews" rows="3"  style="height: 300px; resize: none">{{ news_text or ''}}{{ (news and news.inputNews ) or "" }}</textarea>
+            </div>
+            <div class="col-md">
+              <h3>Summarized News</h3>
+              <textarea class="form-control textarea-autosize"  name="outputNews" id="outputNews" rows="3" placeholder="Summarized" style="height: 300px; resize: none">{{ summarized or ''}}{{ (news and news.inputNews ) or "" }}</textarea>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md">
+              <input type="submit" class="btn btn-primary btn-lg" value="Submit">
+
+            </div>
+          </div>
+          
+          <!-- <button type="button" class="btn btn-primary btn-lg"></button> -->
+        </form>
+        
+      </div>
+
+    <!-- Optional JavaScript -->
+    <script src="{{ url_for('static', filename='jquery.js') }}"> </script>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+    <script>
+      /*!
+ * jQuery Textarea AutoSize plugin : https://github.com/javierjulio/textarea-autosize
+ * Author: Javier Julio
+ * Licensed under the MIT license
+ */
+! function (t, e, i, n) {
+    function s(e, i) {
+        this.element = e, this.$element = t(e), this.init()
+    }
+    var h = "textareaAutoSize",
+        o = "plugin_" + h,
+        r = function (t) {
+            return t.replace(/\s/g, "").length > 0
+        };
+    s.prototype = {
+        init: function () {
+            var i = parseInt(this.$element.css("paddingBottom")) + parseInt(this.$element.css("paddingTop")) + parseInt(this.$element.css("borderTopWidth")) + parseInt(this.$element.css("borderBottomWidth")) || 0;
+            r(this.element.value) && this.$element.height(this.element.scrollHeight - i), this.$element.on("input keyup", function (n) {
+                var s = t(e),
+                    h = s.scrollTop();
+                t(this).height(0).height(this.scrollHeight - i), s.scrollTop(h)
+            })
+        }
+    }, t.fn[h] = function (e) {
+        return this.each(function () {
+            t.data(this, o) || t.data(this, o, new s(this, e))
+        }), this
+    }
+}(jQuery, window, document);
+
+// Initialize Textarea
+$('.textarea-autosize').textareaAutoSize();
+
+    </script>
+  
+</body>
+</html>

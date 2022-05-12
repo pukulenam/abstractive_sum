@@ -1,0 +1,16 @@
+textarea.textarea-autosize {
+    height: 2.25rem;
+    min-height: 2.25rem;
+    resize: none;
+    overflow-y: hidden;
+}
+
+textarea.textarea-autosize.form-control-lg {
+    height: 3.75rem;
+    min-height: 3.75rem;
+}
+
+textarea.textarea-autosize.form-control-sm {
+    height: 2rem;
+    min-height: 2rem;
+}
