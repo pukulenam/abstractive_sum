@@ -39,7 +39,7 @@ def home():
             # Test AI Platform 
 
             
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "pukulenam-test-24bfaa30d863.json" # change for your GCP key
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "pukulenam-test-24bfaa30d863.json" # Ask JSON file to achmad nofandi
             PROJECT = "pukulenam-test" # change for your GCP project
             REGION = "us-central1" # change for your GCP region (where your model is hosted)
             MODEL = 'test'
