@@ -4,8 +4,9 @@
 import googleapiclient.discovery
 import json
 from google.api_core.client_options import ClientOptions
+import os
 
-service = googleapiclient.discovery.build('ml', 'v1')
+
 
 def predict_json(project, region, model, instances, version=None):
     """Send json data to a deployed model for prediction.
@@ -51,7 +52,13 @@ payload = ['Hello world']
 
 # json_object = json.loads(payload)
 # print(json_object)
+basedir = os.path.abspath(os.path.dirname(__file__))
+json_dir=os.path.join(basedir, 'pukulenam-test-1a3766d4f1d9.json')
+print(json_dir)
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=json_dir
+service = googleapiclient.discovery.build('ml', 'v1')
+# print(os.environ)
 output = predict_json('pukulenam-test','us-central1','test',payload)
 str_output = ' '.join(map(str, output))
 print(str_output)

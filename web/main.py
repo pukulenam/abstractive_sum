@@ -4,6 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 import pandas as pd
 import os
+import googleapiclient.discovery
+import json
+from google.api_core.client_options import ClientOptions
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
@@ -29,17 +32,19 @@ def home():
 
         try:
             # return news_text
+            # new_news = News(inputNews=news_text,summarizedNews=news_text)
             # db.session.add(new_news)
             # db.session.commit()
-            
+            # return render_template('index.html',news_text=news_text,summarized=news_text)
             
             # return render_template('index.html', news_text=news_text,summarized=summarized)
             
 
             # Test AI Platform 
 
-            
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "pukulenam-test-24bfaa30d863.json" # Ask JSON file to achmad nofandi
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            json_dir=os.path.join(basedir, 'pukulenam-test-1a3766d4f1d9.json') # Ask JSON file to achmad nofandi
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_dir 
             PROJECT = "pukulenam-test" # change for your GCP project
             REGION = "us-central1" # change for your GCP region (where your model is hosted)
             MODEL = 'test'
@@ -53,16 +58,12 @@ def home():
             return render_template('index.html',news_text=news_text,summarized=str_output)
 
 
-        except:
-            return 'There was an issue summarizing your news'
+        except Exception as e:
+            return 'There was an issue summarizing your news : '+str(e)
 
     else:
-        # tasks = News.query.order_by(News.id).all()
         return render_template('index.html')
-@app.route('/submit',methods=['POST','GET'] )
-def submit():
-    return "<p>Hello, World!</p>"
-    # return render_template('asd.html')
+
 
 @app.route('/history')
 def history():
@@ -75,23 +76,19 @@ def export():
     basedir = os.path.abspath(os.path.dirname(__file__))
     sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
     results = pd.read_sql_query('select * from News',sql_engine)
-    results.to_csv(os.path.join(basedir, 'exported.csv'),index=False,sep=",")
+    results.to_csv(os.path.join(basedir, 'static/exported.csv'),index=False,sep=",")
 
-    # return 'sukses'
-    return send_from_directory(basedir,'exported.csv')
-    
+
+    try:
+        return send_from_directory(basedir,'static/exported.csv')
+    finally:
+        os.remove(os.path.join(basedir, 'static/exported.csv'))
 @app.route('/<int:id>')
 def home_(id):
     result=News.query.get_or_404(id)
 
     return render_template('index.html', news=result)
-    # return send_from_directory(basedir,'exported.csv')
 
-import googleapiclient.discovery
-import json
-from google.api_core.client_options import ClientOptions
-
-service = googleapiclient.discovery.build('ml', 'v1')
 
 def predict_json(project, region, model, instances, version=None):
     """Send json data to a deployed model for prediction.
