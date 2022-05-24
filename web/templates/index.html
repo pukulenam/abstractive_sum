@@ -16,17 +16,52 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="icon" href="{{ url_for('static', filename='Pukulenam.png') }}" type="image/png">
+  <link href="http://fonts.cdnfonts.com/css/seven-segment" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
   <title>Abstractive Summerization</title>
   <style>
     body {
-      background-color: #e9ecef;
+      background-color: white;
+    }
+
+    div.jumbotron {
+      background-color: white;
+      font-family: 'Montserrat';
+    }
+
+    @import url('http://fonts.cdnfonts.com/css/seven-segment');
+
+    nav {
+      background-color: #f85f56;
+    }
+
+    .col-md input {
+      background-color: #f85f56;
+    }
+
+    .col-md input:hover {
+      background-color: #f85f56;
+    }
+
+    nav {
+      background-color: #f85f56;
+    }
+
+    a.nav-link {
+      color: white;
+    }
+
+    a.navbar-brand {
+      color: white;
+      font-family: 'Seven Segment', sans-serif;
     }
   </style>
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <img src="{{ url_for('static', filename='Pukulenam.png') }}" style="width: 30px; margin-right: 5px;">
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <img src="{{ url_for('static', filename='Pukulenam.png') }}"
+      style="width: 30px; margin-right: 5px; cursor: pointer;">
     <a class="navbar-brand" href="/">Pukul Enam</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,8 +99,7 @@
       <br>
       <div class="row">
         <div class="col-md">
-          <input type="submit" class="btn btn-primary btn-lg" value="Submit">
-
+          <input type="submit" class="btn btn-primary" value="Submit">
         </div>
       </div>
 

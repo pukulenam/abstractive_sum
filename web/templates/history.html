@@ -20,19 +20,29 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet">
   <!-- Script Bootstrap -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+  <link href="http://fonts.cdnfonts.com/css/seven-segment" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
   <title>History</title>
   <style>
     html {
       overflow-x: hidden;
     }
 
+    @import url('http://fonts.cdnfonts.com/css/seven-segment');
+
     .m-50 {
       margin: 50px;
 
     }
 
+    body {
+      overflow-x: hidden;
+      font-family: 'Montserrat';
+    }
+
     table {
       resize: none;
+      font-family: 'Montserrat';
     }
 
     .col-sm-12 {
@@ -44,28 +54,120 @@
     }
 
     label {
-      padding-right: 20px;
+      margin-left: 40px;
+      margin-right: 40px;
     }
 
     .dataTables_info {
-      padding-left: 50px;
+      padding-left: 40px;
     }
 
-    .pagination {
-      padding-right: 20px;
+    ul.pagination {
+      padding-right: 40px;
+    }
+
+    thead {
+      background-color: #f85f56;
+    }
+
+    nav {
+      background-color: #f85f56;
+    }
+
+    a.nav-link {
+      color: white;
+    }
+
+    a.navbar-brand {
+      color: white;
+      font-family: 'Seven Segment', sans-serif;
+    }
+
+    th.sorting {
+      color: white;
+    }
+
+    li#table_previous.paginate_button.page-item.previous.disabled {
+      background-color: white;
+    }
+
+    a.page-link {
+      background-color: #f85f56;
+      color: white;
+    }
+
+    a.page-link:focus {
+      background-color: black;
+      color: white;
+    }
+
+    .page-item.active .page-link {
+      z-index: 3;
+      color: #fff;
+      background-color: black;
+      border-color: black;
+    }
+
+    .btn.btn-primary.btn-lg.float-right.m-50 {
+      margin-right: 40px;
+      background-color: #f85f56;
+    }
+
+    button.navbar-toggler {
+      background-color: #f85f56;
+    }
+
+    button.btn.btn-primary {
+      display: block;
+      margin: auto;
+      height: 40px;
+      width: 70px;
+      margin-bottom: 5px;
+      margin-top: -5px;
+    }
+
+    button.btn.btn-warning {
+      display: block;
+      margin: auto;
+      height: 40px;
+      width: 70px;
+      margin-bottom: 5px
+    }
+
+    button.btn.btn-danger {
+      display: block;
+      margin: auto;
+      height: 40px;
+      width: 70px;
+    }
+
+    @media (min-width:1025px) {
+
+      /* big landscape tablets, laptops, and desktops */
+      table {
+        margin: auto;
+      }
+
     }
 
     /* mobile */
-    @media screen and (max-width: 513px) {}
+    @media screen and (max-width: 513px) {
+      table {
+        width: 200px;
+        margin: auto;
+      }
+    }
   </style>
 
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <img src="{{ url_for('static', filename='Pukulenam.png') }}" style="width: 30px; margin-right: 5px;">
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <a href="/"><img src="{{ url_for('static', filename='Pukulenam.png') }}"
+        style="width: 30px; margin-right: 5px; cursor: pointer;"></a>
     <a class="navbar-brand" href="/">Pukul Enam</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -81,14 +183,15 @@
     </div>
   </nav>
 
-  <h3 style="padding-left: 50px; padding-bottom: 30px; padding-top: 30px;">History</h3>
-  <table class="table table-hover" style="width: 100%;" id="table">
-    <thead class="thead-light">
+  <h3 style="padding-left: 50px; padding-bottom: 30px; padding-top: 30px;">
+    History</h3>
+  <table class="table table-hover" style="width: 95.5%; border: 1px solid #f85f56;" id="table">
+    <thead class="thead">
       <tr>
-
         <th>ID</th>
         <th>Input</th>
         <th>Output</th>
+        <th>Button</th>
       </tr>
     </thead>
     <tbody>
@@ -97,6 +200,11 @@
         <td><a href="/{{_news.id}}">{{_news.id}}</a></td>
         <td style="word-break: break-all;">{{_news.inputNews[:100]}}</td>
         <td style="word-break: break-all;">{{_news.summarizedNews[:100]}}</td>
+        <td>
+          <button type="button" class="btn btn-primary">View</button>
+          <button type="button" class="btn btn-warning">Edit</button>
+          <button type="button" class="btn btn-danger">Delete</button>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
