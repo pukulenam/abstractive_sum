@@ -146,7 +146,7 @@ def delete(id):
     try:
         result=News.query.get_or_404(id)
         db.session.delete(result)
-        # db.session.commit()
+        db.session.commit()  
         flash('News deleted successfully',"success")
         return redirect('/history')
     except Exception as e:
