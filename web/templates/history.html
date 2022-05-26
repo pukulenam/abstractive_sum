@@ -185,10 +185,24 @@
 
   <h3 style="padding-left: 50px; padding-bottom: 30px; padding-top: 30px;">
     History</h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert alert-{{ messages[0][0] }} alert-dismissible fade show text-center"  role="alert" >
+      {{ messages[0][1] }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    {% endif %}
+    {% endwith %}
+  <form action="/export" method="post" id="formExport">
   <table class="table table-hover" style="width: 95.5%; border: 1px solid #f85f56;" id="table">
     <thead class="thead">
       <tr>
-        <th>ID</th>
+        <!-- <th>ID</th> -->
+        <th><input type="checkbox" onchange="checkAll(this)" name="chk[]" ></th>
         <th>Input</th>
         <th>Output</th>
         <th>Button</th>
@@ -197,24 +211,54 @@
     <tbody>
       {% for _news in news %}
       <tr>
-        <td><a href="/{{_news.id}}">{{_news.id}}</a></td>
+        <!-- <td><a href="/{{_news.id}}">{{_news.id}}</a></td> -->
+        <td><input name="list_array[]" type="checkbox"  value="{{_news.id}}"></td>
         <td style="word-break: break-all;">{{_news.inputNews[:100]}}</td>
         <td style="word-break: break-all;">{{_news.summarizedNews[:100]}}</td>
         <td>
-          <button type="button" class="btn btn-primary">View</button>
+          <!-- <button type="button" class="btn btn-primary">View</button>
           <button type="button" class="btn btn-warning">Edit</button>
-          <button type="button" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-danger">Delete</button> -->
+          <a class="btn btn-primary" href="/{{_news.id}}" role="button">View</a>
+          <a class="btn btn-warning" href="/edit/{{_news.id}}" role="button">Edit</a>
+          <a class="btn btn-danger" href="/delete/{{_news.id}}" role="button">Delete</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <a class="btn btn-primary btn-lg float-right m-50" href="/export" role="button">Export to CSV</a>
+  <a class="btn btn-primary btn-lg float-right m-50" href="#" role="button" onclick="document.getElementById('formExport').submit()">Export to CSV</a>
+  <!-- <button class="btn btn-primary btn-lg float-right m-50" type="submit" >Export</button> -->
+  </form>
+  
   <script>
     $(document).ready(function () {
-      $('#table').DataTable();
+      $('#table').DataTable({
+        "columnDefs": [ {
+        "targets": [ 0 ],
+        "orderable": false
+    } ]
+      });
+      
     });
+
+    function checkAll(ele) {
+      var checkboxes = document.getElementsByTagName('input');
+      if (ele.checked) {
+          for (var i = 0; i < checkboxes.length; i++) {
+              if (checkboxes[i].type == 'checkbox' ) {
+                  checkboxes[i].checked = true;
+              }
+          }
+      } else {
+          for (var i = 0; i < checkboxes.length; i++) {
+              if (checkboxes[i].type == 'checkbox') {
+                  checkboxes[i].checked = false;
+              }
+          }
+      }
+  }
   </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
 </body>

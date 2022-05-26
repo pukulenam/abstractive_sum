@@ -1,7 +1,7 @@
 from ast import dump
 from email.mime import base
 from uuid import uuid4
-from flask import Flask, jsonify, render_template, request, send_from_directory,url_for, request,make_response,abort
+from flask import Flask, jsonify, redirect, render_template, request, send_from_directory,url_for, request,make_response,abort , session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 import pandas as pd
@@ -13,9 +13,11 @@ from flask_restful import Resource, Api, reqparse
 import secrets
 from flask_marshmallow import Marshmallow
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
+app.secret_key = 'pukulenam'
 db = SQLAlchemy(app)
 api = Api(app)
 ma = Marshmallow(app)
@@ -90,23 +92,92 @@ def home():
 def history():
     query_news=News.query.order_by(News.id)
 
-    return render_template('history.html', news=query_news)
+    return render_template('history.html', news=query_news,status='')
 
-@app.route('/export')
+@app.route('/export', methods=['POST'])
 def export():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
-    results = pd.read_sql_query('select * from News',sql_engine)
-    results.to_csv(os.path.join(basedir, 'static/exported.csv'),index=False,sep=",")
+    # basedir = os.path.abspath(os.path.dirname(__file__))
+    # sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
+    # results = pd.read_sql_query('select * from News',sql_engine)
+    # name = 'static/'+datetime.now().strftime('%d-%m-%Y %H.%M ')+'news.csv'
+    # results.to_csv(os.path.join(basedir,name),index=False,sep=",")
 
-    return send_from_directory(basedir,'static/exported.csv')
+    # return send_from_directory(basedir, name)
+
+    list_id = request.form.getlist('list_array[]')
+    if len(list_id)<1:
+        query_news=News.query.order_by(News.id)
+        flash('You have to check the news that you want to export',"danger")
+        return render_template('history.html',news=query_news)
+    else:
+        try:
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            dir = os.path.join(basedir,'exported')
+            for f in os.listdir(dir):
+                os.remove(os.path.join(dir, f))
+                
+            sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
+            query= 'SELECT * FROM News WHERE id IN ('+(','.join([str(elem) for elem in list_id]))+')'
+            results = pd.read_sql_query(query,sql_engine)
+            name = 'exported/'+datetime.now().strftime('%d-%m-%Y %H.%M ')+'news.csv'
+            results.to_csv(os.path.join(basedir,name),index=False,sep=",")
+            return send_from_directory(basedir, name)   
+        except:
+
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
+            query= 'SELECT * FROM News WHERE id IN ('+(','.join([str(elem) for elem in list_id]))+')'
+            results = pd.read_sql_query(query,sql_engine)
+            name = 'exported/'+datetime.now().strftime('%d-%m-%Y %H.%M ')+'news.csv'
+            results.to_csv(os.path.join(basedir,name),index=False,sep=",")
+            return send_from_directory(basedir, name)   
+       
+
+
 
 @app.route('/<int:id>')
 def home_(id):
     result=News.query.get_or_404(id)
 
-    return render_template('index.html', news=result)
+    return render_template('index.html', news=result,state='view')
 
+@app.route('/delete/<int:id>')
+def delete(id):
+    try:
+        result=News.query.get_or_404(id)
+        db.session.delete(result)
+        # db.session.commit()
+        flash('News deleted successfully',"success")
+        return redirect('/history')
+    except Exception as e:
+        # return 'There was an issue deleting your news : '+str(e)
+        query_news=News.query.order_by(News.id)
+        flash(str(e),"danger")
+        return render_template('history.html', status=str(e),news=query_news)
+
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+    if request.method=='GET':
+        try:
+            result=News.query.get_or_404(id)
+            flash('Changes saved successfully',"success")
+            return render_template('index.html', state='edit',news=result)
+        except Exception as e:
+            flash(str(e),"danger")
+            query_news=News.query.order_by(News.id)    
+            return render_template('history.html', status=str(e),news=query_news)
+
+    else:
+        result=News.query.get_or_404(id)
+        news_text = request.form['inputNews']
+        summarized_news = request.form['outputNews']
+        result.inputNews=news_text
+        result.summarizedNews=summarized_news
+        try:
+            db.session.commit()
+            return redirect('/history')
+        except Exception as e:    
+            return 'There was an issue updating your news : '+str(e)
 
 def predict_json(project, region, model, instances, version=None):
     """Send json data to a deployed model for prediction.

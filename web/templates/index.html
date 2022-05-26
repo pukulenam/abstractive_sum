@@ -81,7 +81,11 @@
   </nav>
 
   <div class="jumbotron">
+    {% if state=='edit' %}
+    <form action="/edit/{{news.id}}" method="POST">
+    {% else %}
     <form action="/" method="POST">
+    {% endif %}
       <div class="row">
         <div class="col-md">
           <h3>Input News</h3>
@@ -99,7 +103,13 @@
       <br>
       <div class="row">
         <div class="col-md">
+          {% if state=='edit' %}
+          <input type="submit" class="btn btn-primary" value="Save Changes">
+          {% elif state=='view' %}
+          <a class="btn btn-primary" href="/history" role="button">Back</a>
+          {% else %}
           <input type="submit" class="btn btn-primary" value="Submit">
+          {% endif %}
         </div>
       </div>
 
