@@ -1,16 +1,196 @@
-textarea.textarea-autosize {
-    height: 2.25rem;
-    min-height: 2.25rem;
+html {
+    overflow-x: hidden;
+}
+
+@import url('http://fonts.cdnfonts.com/css/seven-segment');
+
+.m-50 {
+    margin: 50px;
+
+}
+
+body {
+    overflow-x: hidden;
+    font-family: 'Montserrat';
+}
+
+table {
     resize: none;
-    overflow-y: hidden;
+    font-family: 'Montserrat';
 }
 
-textarea.textarea-autosize.form-control-lg {
-    height: 3.75rem;
-    min-height: 3.75rem;
+.col-sm-12 {
+    overflow: hidden;
 }
 
-textarea.textarea-autosize.form-control-sm {
-    height: 2rem;
-    min-height: 2rem;
+.datatables_length {
+    padding-left: 50px;
+}
+
+label {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.dataTables_info {
+    padding-left: 40px;
+}
+
+ul.pagination {
+    padding-right: 40px;
+}
+
+thead {
+    background-color: #f85f56;
+}
+
+nav {
+    background-color: #f85f56;
+}
+
+a.nav-link {
+    color: white;
+}
+
+a.navbar-brand {
+    color: white;
+    font-family: 'Seven Segment', sans-serif;
+}
+
+th.sorting {
+    color: white;
+}
+
+li#table_previous.paginate_button.page-item.previous.disabled {
+    background-color: white;
+}
+
+a.btn.btn-danger {
+    color: white !important;
+}
+
+a.page-link {
+    background-color: white !important;
+    color: white;
+}
+
+a.page-link:focus {
+    background-color: black !important;
+    color: white;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: black !important;
+    border-color: black !important;
+}
+
+.btn.btn-primary.btn-lg.float-right.m-50 {
+    margin-right: 40px;
+    background-color: #f85f56;
+}
+
+button.navbar-toggler {
+    background-color: #f85f56;
+}
+
+button.btn.btn-primary {
+    display: block;
+    margin: auto;
+    height: 40px;
+    width: 70px;
+    margin-bottom: 5px;
+    margin-top: -5px;
+}
+
+button.btn.btn-warning {
+    display: block;
+    margin: auto;
+    height: 40px;
+    width: 70px;
+    margin-bottom: 5px
+}
+
+button.btn.btn-danger {
+    display: block;
+    margin: auto;
+    height: 40px;
+    width: 70px;
+}
+
+button.btn.btn-danger:hover {
+    opacity: 2;
+}
+
+
+/* Popup button */
+.cancelbtn,
+.deletebtn {
+    float: left;
+    width: 50%;
+}
+
+.cancelbtn {
+    background-color: wheat;
+    color: black;
+}
+
+.deletebtn {
+    background-color: #f44336;
+}
+
+/* popup background */
+.container {
+    padding: 15px;
+    text-align: center;
+}
+
+
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    width: 40%;
+    /* Full width */
+    height: 40%;
+    /* Full height */
+    overflow: hidden;
+    margin: auto;
+    /* Enable scroll if needed */
+    padding-top: 10px;
+}
+
+.modal-content {
+    margin: 5% auto 15% auto;
+    border: 1px solid black;
+    width: 80%;
+}
+
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+
+@media (min-width:1025px) {
+
+    /* big landscape tablets, laptops, and desktops */
+    table {
+        margin: auto;
+    }
+
+}
+
+/* mobile */
+@media screen and (max-width: 513px) {
+    table {
+        width: 200px;
+        margin: auto;
+    }
 }
