@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
@@ -27,196 +28,7 @@
 
   <title>History</title>
   <style>
-    html {
-      overflow-x: hidden;
-    }
 
-    @import url('http://fonts.cdnfonts.com/css/seven-segment');
-
-    .m-50 {
-      margin: 50px;
-
-    }
-
-    body {
-      overflow-x: hidden;
-      font-family: 'Montserrat';
-    }
-
-    table {
-      resize: none;
-      font-family: 'Montserrat';
-    }
-
-    .col-sm-12 {
-      overflow: hidden;
-    }
-
-    .datatables_length {
-      padding-left: 50px;
-    }
-
-    label {
-      margin-left: 40px;
-      margin-right: 40px;
-    }
-
-    .dataTables_info {
-      padding-left: 40px;
-    }
-
-    ul.pagination {
-      padding-right: 40px;
-    }
-
-    thead {
-      background-color: #f85f56;
-    }
-
-    nav {
-      background-color: #f85f56;
-    }
-
-    a.nav-link {
-      color: white;
-    }
-
-    a.navbar-brand {
-      color: white;
-      font-family: 'Seven Segment', sans-serif;
-    }
-
-    th.sorting {
-      color: white;
-    }
-
-    li#table_previous.paginate_button.page-item.previous.disabled {
-      background-color: white;
-    }
-
-    a.page-link {
-      background-color: #f85f56;
-      color: white;
-    }
-
-    a.page-link:focus {
-      background-color: black;
-      color: white;
-    }
-
-    .page-item.active .page-link {
-      z-index: 3;
-      color: #fff;
-      background-color: black;
-      border-color: black;
-    }
-
-    .btn.btn-primary.btn-lg.float-right.m-50 {
-      margin-right: 40px;
-      background-color: #f85f56;
-    }
-
-    button.navbar-toggler {
-      background-color: #f85f56;
-    }
-
-    button.btn.btn-primary {
-      display: block;
-      margin: auto;
-      height: 40px;
-      width: 70px;
-      margin-bottom: 5px;
-      margin-top: -5px;
-    }
-
-    button.btn.btn-warning {
-      display: block;
-      margin: auto;
-      height: 40px;
-      width: 70px;
-      margin-bottom: 5px
-    }
-
-    button.btn.btn-danger {
-      display: inline;
-      margin: auto;
-      height: 40px;
-      width: 70px;
-    }
-
-    button.btn.btn-danger:hover {
-      opacity: 2;
-    }
-
-
-    /* Popup button
-    .cancelbtn,
-    .deletebtn {
-      float: left;
-      width: 50%;
-    }
-
-    .cancelbtn {
-      background-color: wheat;
-      color: black;
-    }
-
-    .deletebtn {
-      background-color: #f44336;
-    } */
-
-    /* popup background */
-    /* .container {
-      padding: 15px;
-      text-align: center;
-      border: 1px solid black;
-      background-color: white;
-      opacity: 0.8;
-    }
-
-
-    .modal {
-      display: none;
-    position: fixed;
-    z-index: 1;
-    width: 40%;
-
-    height: 40%;
-    overflow: hidden;
-    margin: auto;
-    padding-top: 10px;
-    }
-
-    .modal-content {
-      margin: 5% auto 15% auto;
-      border: 1px solid black;
-      width: 80%;
-    }
-
-
-    .clearfix::after {
-      content: "";
-      clear: both;
-      display: table;
-    }
-
-    */
-    @media (min-width:1025px) {
-
-      /* big landscape tablets, laptops, and desktops */
-      table {
-        margin: auto;
-      }
-
-    }
-
-    /* mobile */
-    @media screen and (max-width: 513px) {
-      table {
-        width: 200px;
-        margin: auto;
-      }
-    }
   </style>
 
 </head>
@@ -278,16 +90,11 @@
           <td>
             <a class="btn btn-primary" href="/{{_news.id}}" role="button">View</a>
             <a class="btn btn-warning" href="/edit/{{_news.id}}" role="button">Edit</a>
-            <!--<a onclick="document.getElementById('id01').style.display='block'" type=" button" class="btn btn-danger"
-              role="button">Delete</a>
-             <a href="/delete/{{_news.id}}" onclick="return confirm('Are you sure you want to delete this ?')"
-              role="button" class="btn btn-danger" style="display: inline; margin: auto;">
-              Delete
-            </a> -->
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-table="{{_news.id}}" data-target="#exampleModal">
+            <a type="button" class="btn btn-danger" data-toggle="modal" data-table="{{_news.id}}"
+              data-target="#exampleModal" style="display: inline;">
               Delete
-            </button>
+            </a>
             <!-- Modal bootstrap -->
             <div class=" modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
               aria-hidden="true">
@@ -303,28 +110,11 @@
                   </div>
                   <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-danger" href="delete/{{_news.id}}">Delete</a>
+                    <a class="btn btn-danger">Delete</a>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- Modal biasa -->
-            <!-- <button onclick="document.getElementById('id01').style.display='block'" type=" button"
-            class="btn btn-danger">Delete</button> 
-            <div id="id01" class="modal">
-              <form class="modal-content">
-                <div class="container">
-                  <p>Are you sure you want to delete this ?</p>
-                  <div class="clearfix">
-                    <button type="button" onclick="document.getElementById('id01').style.display='none'"
-                      class="cancelbtn">Cancel</button>
-                    <a href="/delete/{{_news.id}}"><button type="button"
-                        onclick="document.getElementById('id01').style.display='none'"
-                        class="deletebtn">Delete</button></a>
-                  </div>
-                </div>
-              </form>
-            </div>-->
 
           </td>
         </tr>
@@ -342,13 +132,10 @@
       var table = $(e.relatedTarget).data('table')
       var href = '/delete/' + table
       $('.btn-danger', this).attr('href', href)
-      // console.log(href)
+      console.log(href)
     })
 
-    // $('#exampleModal .btn-danger').on('click', function (e) {
-    //   e.preventDefault()
-    //   alert(e.target.pathname + e.target.search)
-    // })
+
 
 
     $(document).ready(function () {

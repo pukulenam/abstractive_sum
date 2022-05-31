@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styleindex.css') }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <!-- <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}"> -->
@@ -20,41 +21,7 @@
   <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
   <title>Abstractive Summerization</title>
   <style>
-    body {
-      background-color: white;
-    }
 
-    div.jumbotron {
-      background-color: white;
-      font-family: 'Montserrat';
-    }
-
-    @import url('http://fonts.cdnfonts.com/css/seven-segment');
-
-    nav {
-      background-color: #f85f56;
-    }
-
-    .col-md input {
-      background-color: #f85f56;
-    }
-
-    .col-md input:hover {
-      background-color: #f85f56;
-    }
-
-    nav {
-      background-color: #f85f56;
-    }
-
-    a.nav-link {
-      color: white;
-    }
-
-    a.navbar-brand {
-      color: white;
-      font-family: 'Seven Segment', sans-serif;
-    }
   </style>
 </head>
 
@@ -83,38 +50,38 @@
   <div class="jumbotron">
     {% if state=='edit' %}
     <form action="/edit/{{news.id}}" method="POST">
-    {% else %}
-    <form action="/" method="POST">
-    {% endif %}
-      <div class="row">
-        <div class="col-md">
-          <h3>Input News</h3>
-          <textarea class="form-control textarea-autosize" name="inputNews" autofocus="autofocus" id="inputNews"
-            rows="3"
-            style="height: 300px; resize: none">{{ news_text or ''}}{{ (news and news.inputNews ) or "" }}</textarea>
+      {% else %}
+      <form action="/" method="POST">
+        {% endif %}
+        <div class="row">
+          <div class="col-md">
+            <h3>Input News</h3>
+            <textarea class="form-control textarea-autosize" name="inputNews" autofocus="autofocus" id="inputNews"
+              rows="3"
+              style="height: 300px; resize: none">{{ news_text or ''}}{{ (news and news.inputNews ) or "" }}</textarea>
+          </div>
+          <div class="col-md">
+            <h3>Summarized News</h3>
+            <textarea class="form-control textarea-autosize" name="outputNews" id="outputNews" rows="3"
+              placeholder="Summarized"
+              style="height: 300px; resize: none">{{ summarized or ''}}{{ (news and news.summarizedNews ) or "" }}</textarea>
+          </div>
         </div>
-        <div class="col-md">
-          <h3>Summarized News</h3>
-          <textarea class="form-control textarea-autosize" name="outputNews" id="outputNews" rows="3"
-            placeholder="Summarized"
-            style="height: 300px; resize: none">{{ summarized or ''}}{{ (news and news.summarizedNews ) or "" }}</textarea>
+        <br>
+        <div class="row">
+          <div class="col-md">
+            {% if state=='edit' %}
+            <input type="submit" class="btn btn-primary" value="Save Changes">
+            {% elif state=='view' %}
+            <a class="btn btn-primary" href="/history" role="button">Back</a>
+            {% else %}
+            <input type="submit" class="btn btn-primary" value="Submit">
+            {% endif %}
+          </div>
         </div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-md">
-          {% if state=='edit' %}
-          <input type="submit" class="btn btn-primary" value="Save Changes">
-          {% elif state=='view' %}
-          <a class="btn btn-primary" href="/history" role="button">Back</a>
-          {% else %}
-          <input type="submit" class="btn btn-primary" value="Submit">
-          {% endif %}
-        </div>
-      </div>
 
-      <!-- <button type="button" class="btn btn-primary btn-lg"></button> -->
-    </form>
+        <!-- <button type="button" class="btn btn-primary btn-lg"></button> -->
+      </form>
 
   </div>
 

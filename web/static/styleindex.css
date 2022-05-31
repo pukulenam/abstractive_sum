@@ -1,0 +1,35 @@
+body {
+    background-color: white;
+}
+
+div.jumbotron {
+    background-color: white;
+    font-family: 'Montserrat';
+}
+
+@import url('http://fonts.cdnfonts.com/css/seven-segment');
+
+nav {
+    background-color: #f85f56;
+}
+
+.col-md input {
+    background-color: #f85f56;
+}
+
+.col-md input:hover {
+    background-color: #f85f56;
+}
+
+nav {
+    background-color: #f85f56;
+}
+
+a.nav-link {
+    color: white;
+}
+
+a.navbar-brand {
+    color: white;
+    font-family: 'Seven Segment', sans-serif;
+}
