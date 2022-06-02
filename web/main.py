@@ -1,6 +1,3 @@
-from ast import dump
-from email.mime import base
-from uuid import uuid4
 from flask import Flask, jsonify, redirect, render_template, request, send_from_directory,url_for, request,make_response,abort , session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
@@ -160,7 +157,7 @@ def edit(id):
     if request.method=='GET':
         try:
             result=News.query.get_or_404(id)
-            flash('Changes saved successfully',"success")
+            
             return render_template('index.html', state='edit',news=result)
         except Exception as e:
             flash(str(e),"danger")
@@ -175,6 +172,7 @@ def edit(id):
         result.summarizedNews=summarized_news
         try:
             db.session.commit()
+            flash('Changes saved successfully',"success")
             return redirect('/history')
         except Exception as e:    
             return 'There was an issue updating your news : '+str(e)
