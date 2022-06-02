@@ -147,6 +147,7 @@ button.btn.btn-danger:hover {
 }
 
 
+
 .modal {
     display: none;
     /* Hidden by default */
@@ -183,6 +184,10 @@ button.btn.btn-danger:hover {
     /* big landscape tablets, laptops, and desktops */
     table {
         margin: auto;
+    }
+
+    th#fix-button.sorting {
+        width: 200px;
     }
 
 }
