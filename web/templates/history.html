@@ -88,10 +88,10 @@
           <td style="word-break: break-all;">{{_news.inputNews[:100]}}</td>
           <td style="word-break: break-all;">{{_news.summarizedNews[:100]}}</td>
           <td>
-            <a class="btn btn-primary" href="/{{_news.id}}" role="button">View</a>
-            <a class="btn btn-warning" href="/edit/{{_news.id}}" role="button">Edit</a>
+            <a class="btn btn-primary" id="Act_button" href="/{{_news.id}}" role="button">View</a>
+            <a class="btn btn-warning" id="Act_button" href="/edit/{{_news.id}}" role="button">Edit</a>
             <!-- Button trigger modal -->
-            <a type="button" class="btn btn-danger" data-toggle="modal" data-table="{{_news.id}}"
+            <a type="button" id="Act_button" class="btn btn-danger" data-toggle="modal" data-table="{{_news.id}}"
               data-target="#exampleModal" style="display: inline;">
               Delete
             </a>

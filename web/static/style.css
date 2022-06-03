@@ -86,6 +86,14 @@ a.page-link:focus {
     border-color: black !important;
 }
 
+th.sorting_disabled.sorting_asc::before {
+    visibility: hidden;
+}
+
+th.sorting_disabled.sorting_asc::after {
+    visibility: hidden;
+}
+
 .btn.btn-primary.btn-lg.float-right.m-50 {
     margin-right: 40px;
     background-color: #f85f56;
@@ -178,10 +186,10 @@ button.btn.btn-danger:hover {
     display: table;
 }
 
-
+/* big landscape tablets, laptops, and desktops */
 @media (min-width:1025px) {
 
-    /* big landscape tablets, laptops, and desktops */
+
     table {
         margin: auto;
     }
@@ -192,10 +200,25 @@ button.btn.btn-danger:hover {
 
 }
 
+/* Tablet small*/
+@media only screen and (max-width: 1025px) {
+    th#fixed-button.sorting {
+        width: 60px;
+    }
+
+    #Act_button {
+        width: 80px;
+    }
+}
+
 /* mobile */
 @media screen and (max-width: 513px) {
     table {
         width: 200px;
         margin: auto;
+    }
+
+    #Act_button {
+        width: 80px;
     }
 }
