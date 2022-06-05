@@ -5,12 +5,14 @@ import pandas as pd
 import os
 import googleapiclient.discovery
 import json
+import requests
 from google.api_core.client_options import ClientOptions
 from flask_restful import Resource, Api, reqparse
 import secrets
 from flask_marshmallow import Marshmallow
 from functools import wraps
-from datetime import datetime
+from datetime import datetime   
+from difflib import SequenceMatcher
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
@@ -46,36 +48,32 @@ def home():
     if request.method == 'POST':
         news_text = request.form['inputNews']
 
-        # summarized='Intinya... '+str(news_text)
-        
-        # new_news = News(inputNews=news_text,summarizedNews=summarized)
-
         try:
-            # return news_text
-            # new_news = News(inputNews=news_text,summarizedNews=news_text)
-            # db.session.add(new_news)
-            # db.session.commit()
-            # return render_template('index.html',news_text=news_text,summarized=news_text)
-            
-            # return render_template('index.html', news_text=news_text,summarized=summarized)
-            
+            # caching news from db before call predict endpoint
+            query_news=News.query.order_by(News.id)
 
-            # Test AI Platform 
+            for _news in query_news:
+                compare = SequenceMatcher(None, _news.inputNews, news_text)
+                if compare.ratio() > 0.95:
+                    return render_template('index.html',news_text=news_text,summarized=_news.summarizedNews)
 
-            basedir = os.path.abspath(os.path.dirname(__file__))
-            json_dir=os.path.join(basedir, 'pukulenam-test-1a3766d4f1d9.json') # Ask JSON file to achmad nofandi
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_dir 
-            PROJECT = "pukulenam-test" # change for your GCP project
-            REGION = "us-central1" # change for your GCP region (where your model is hosted)
-            MODEL = 'test'
+            # call predict endpoint
+            url = "https://predictapi-ntklgukjta-uc.a.run.app/api/summarize"
 
-            payload=[news_text]
-            output = predict_json(PROJECT,REGION,MODEL,payload)
-            str_output = ' '.join(map(str, output))
-            new_news = News(inputNews=news_text,summarizedNews=str_output)
+            payload = json.dumps({
+            "news": news_text
+            })
+            headers = {
+            'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            json_data = json.loads(response.text)
+            new_news = News(inputNews=news_text,summarizedNews=json_data["summarized"])
             db.session.add(new_news)
             db.session.commit()
-            return render_template('index.html',news_text=news_text,summarized=str_output)
+            return render_template('index.html',news_text=news_text,summarized=json_data["summarized"])
 
 
         except Exception as e:
@@ -93,13 +91,7 @@ def history():
 
 @app.route('/export', methods=['POST'])
 def export():
-    # basedir = os.path.abspath(os.path.dirname(__file__))
-    # sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
-    # results = pd.read_sql_query('select * from News',sql_engine)
-    # name = 'static/'+datetime.now().strftime('%d-%m-%Y %H.%M ')+'news.csv'
-    # results.to_csv(os.path.join(basedir,name),index=False,sep=",")
 
-    # return send_from_directory(basedir, name)
 
     list_id = request.form.getlist('list_array[]')
     if len(list_id)<1:
@@ -177,52 +169,10 @@ def edit(id):
         except Exception as e:    
             return 'There was an issue updating your news : '+str(e)
 
-def predict_json(project, region, model, instances, version=None):
-    """Send json data to a deployed model for prediction.
-
-    Args:
-        project (str): project where the Cloud ML Engine Model is deployed.
-        region (str): regional endpoint to use; set to None for ml.googleapis.com
-        model (str): model name.
-        instances ([Mapping[str: Any]]): Keys should be the names of Tensors
-            your deployed model expects as inputs. Values should be datatypes
-            convertible to Tensors, or (potentially nested) lists of datatypes
-            convertible to tensors.
-        version: str, version of the model to target.
-    Returns:
-        Mapping[str: any]: dictionary of prediction results defined by the
-            model.
-    """
-    # Create the ML Engine service object.
-    # To authenticate set the environment variable
-    # GOOGLE_APPLICATION_CREDENTIALS=<path_to_service_account_file>
-    prefix = "{}-ml".format(region) if region else "ml"
-    api_endpoint = "https://{}.googleapis.com".format(prefix)
-    client_options = ClientOptions(api_endpoint=api_endpoint)
-    service = googleapiclient.discovery.build(
-        'ml', 'v1', client_options=client_options)
-    name = 'projects/{}/models/{}'.format(project, model)
-
-    if version is not None:
-        name += '/versions/{}'.format(version)
-
-    response = service.projects().predict(
-        name=name,
-        body={'instances': instances}
-    ).execute()
-
-    if 'error' in response:
-        raise RuntimeError(response['error'])
-
-    return response['predictions']
 
 
-@app.route('/test1')
-def test1():
-    # query_news=News.query.order_by(News.id.desc())
- 
-    
-    return ''
+
+
 
 def require_appkey(view_function):
     @wraps(view_function)
@@ -247,6 +197,7 @@ def require_passkey(view_function):
         else:
             abort(401)
     return decorated_function
+
 # API
 
 class Security(Resource):
@@ -280,25 +231,35 @@ class Summarize(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('news')
         args = parser.parse_args()
-        # return args.news
 
         try:
 
-            basedir = os.path.abspath(os.path.dirname(__file__))
-            json_dir=os.path.join(basedir, 'pukulenam-test-1a3766d4f1d9.json') # Ask JSON file to achmad nofandi
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = json_dir 
-            PROJECT = "pukulenam-test" # change for your GCP project
-            REGION = "us-central1" # change for your GCP region (where your model is hosted)
-            MODEL = 'test'
+            # caching news from db before call predict endpoint
+            query_news=News.query.order_by(News.id)
 
-            payload=[args.news]
-            output = predict_json(PROJECT,REGION,MODEL,payload)
-            str_output = ' '.join(map(str, output))
-            new_news = News(inputNews=args.news,summarizedNews=str_output)
+            for _news in query_news:
+                compare = SequenceMatcher(None, _news.inputNews, args.news)
+                if compare.ratio() > 0.95:
+                    return jsonify({'summarized': _news.summarizedNews})
+
+            # call predict endpoint
+            url = "https://predictapi-ntklgukjta-uc.a.run.app/api/summarize"
+
+            payload = json.dumps({
+            "news": args.news
+            })
+            headers = {
+            'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            json_data = json.loads(response.text)
+            new_news = News(inputNews=args.news,summarizedNews=json_data["summarized"])
             db.session.add(new_news)
             db.session.commit()
-            # return render_template('index.html',news_text=news_text,summarized=str_output)
-            return jsonify({'summarized': str_output})
+        
+            return jsonify({'summarized': json_data["summarized"]})
 
 
         except Exception as e:
@@ -311,6 +272,6 @@ api.add_resource(Security, '/api/security')
 api.add_resource(Summarize, '/api/summarize')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 
 
