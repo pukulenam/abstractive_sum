@@ -71,7 +71,7 @@ a.btn.btn-danger {
 
 a.page-link {
     background-color: white !important;
-    color: white;
+    color: black;
 }
 
 a.page-link:focus {
@@ -84,6 +84,14 @@ a.page-link:focus {
     color: #fff;
     background-color: black !important;
     border-color: black !important;
+}
+
+th.sorting_disabled.sorting_asc::before {
+    visibility: hidden;
+}
+
+th.sorting_disabled.sorting_asc::after {
+    visibility: hidden;
 }
 
 .btn.btn-primary.btn-lg.float-right.m-50 {
@@ -147,6 +155,7 @@ button.btn.btn-danger:hover {
 }
 
 
+
 .modal {
     display: none;
     /* Hidden by default */
@@ -177,14 +186,29 @@ button.btn.btn-danger:hover {
     display: table;
 }
 
-
+/* big landscape tablets, laptops, and desktops */
 @media (min-width:1025px) {
 
-    /* big landscape tablets, laptops, and desktops */
+
     table {
         margin: auto;
     }
 
+    th#fixed-button.sorting {
+        width: 200px;
+    }
+
+}
+
+/* Tablet small*/
+@media only screen and (max-width: 1025px) {
+    th#fixed-button.sorting {
+        width: 60px;
+    }
+
+    #Act_button {
+        width: 80px;
+    }
 }
 
 /* mobile */
@@ -192,5 +216,9 @@ button.btn.btn-danger:hover {
     table {
         width: 200px;
         margin: auto;
+    }
+
+    #Act_button {
+        width: 80px;
     }
 }
