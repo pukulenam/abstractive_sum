@@ -124,16 +124,14 @@
 
     <a class="btn btn-primary btn-lg float-right m-50" href="#" role="button"
       onclick="document.getElementById('formExport').submit()">Export to CSV</a>
-    <!-- <button class="btn btn-primary btn-lg float-right m-50" type="submit" >Export</button> -->
   </form>
 
   <script>
-    $('#exampleModal').on('show.bs.modal', function (e) {
-      var table = $(e.relatedTarget).data('table')
-      var href = '/delete/' + table
-      $('.btn-danger', this).attr('href', href)
-      console.log(href)
-    })
+      $(document).on('show.bs.modal', "#exampleModal", function (e) {
+        var table = $(e.relatedTarget).data('table')
+        var href = '/delete/' + table
+        $('.btn-danger', this).attr('href', href)
+      });
 
 
 

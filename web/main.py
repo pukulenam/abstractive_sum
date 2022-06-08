@@ -13,9 +13,13 @@ from flask_marshmallow import Marshmallow
 from functools import wraps
 from datetime import datetime   
 from difflib import SequenceMatcher
+import pymysql
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
+db_url = 'mysql+pymysql://<username>:<password>@<host>/<table>'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.secret_key = 'pukulenam'
 db = SQLAlchemy(app)
 api = Api(app)
@@ -47,37 +51,48 @@ class NewsSchema(ma.Schema):
 def home():
     if request.method == 'POST':
         news_text = request.form['inputNews']
+        
+        if news_text.lstrip() == '':
+            flash("News can't be empty","danger")
+            return render_template('index.html')
+        elif len(news_text.split()) < 20:
+            flash("News to short","danger")
+            return render_template('index.html')
+        else:
+            try:
+                # caching news from db before call predict endpoint
+                query_news=News.query.order_by(News.id)
 
-        try:
-            # caching news from db before call predict endpoint
-            query_news=News.query.order_by(News.id)
+                for _news in query_news:
+                    compare = SequenceMatcher(None, _news.inputNews, news_text)
+                    if compare.ratio() > 0.95:
+                        flash("News already summarized before","success")
+                        return render_template('index.html',news_text=news_text,summarized=_news.summarizedNews)
 
-            for _news in query_news:
-                compare = SequenceMatcher(None, _news.inputNews, news_text)
-                if compare.ratio() > 0.95:
-                    return render_template('index.html',news_text=news_text,summarized=_news.summarizedNews)
+                # call predict endpoint
+                url = "https://predictapi-ntklgukjta-uc.a.run.app/api/summarize"
 
-            # call predict endpoint
-            url = "https://predictapi-ntklgukjta-uc.a.run.app/api/summarize"
+                payload = json.dumps({
+                "news": news_text
+                })
+                headers = {
+                'Content-Type': 'application/json',
+                'x-api-key': '0fa082af97380ffdecee051edb6b0b80'
+                }
 
-            payload = json.dumps({
-            "news": news_text
-            })
-            headers = {
-            'Content-Type': 'application/json'
-            }
+                response = requests.request("POST", url, headers=headers, data=payload)
 
-            response = requests.request("POST", url, headers=headers, data=payload)
-
-            json_data = json.loads(response.text)
-            new_news = News(inputNews=news_text,summarizedNews=json_data["summarized"])
-            db.session.add(new_news)
-            db.session.commit()
-            return render_template('index.html',news_text=news_text,summarized=json_data["summarized"])
+                json_data = json.loads(response.text)
+                output = "Intinyaa... "+json_data["summarized"]
+                new_news = News(inputNews=news_text,summarizedNews=output)
+                db.session.add(new_news)
+                db.session.commit()
+                flash("Successfully summarized news","success")
+                return render_template('index.html',news_text=news_text,summarized=output)
 
 
-        except Exception as e:
-            return 'There was an issue summarizing your news : '+str(e)
+            except Exception as e:
+                return 'There was an issue summarizing your news : '+str(e)
 
     else:
         return render_template('index.html')
@@ -105,8 +120,8 @@ def export():
             for f in os.listdir(dir):
                 os.remove(os.path.join(dir, f))
                 
-            sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
-            query= 'SELECT * FROM News WHERE id IN ('+(','.join([str(elem) for elem in list_id]))+')'
+            sql_engine = create_engine(db_url)
+            query= 'SELECT * FROM news WHERE id IN ('+(','.join([str(elem) for elem in list_id]))+')'
             results = pd.read_sql_query(query,sql_engine)
             name = 'exported/'+datetime.now().strftime('%d-%m-%Y %H.%M ')+'news.csv'
             results.to_csv(os.path.join(basedir,name),index=False,sep=",")
@@ -114,8 +129,8 @@ def export():
         except:
 
             basedir = os.path.abspath(os.path.dirname(__file__))
-            sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(basedir, 'news.db')), echo=False)
-            query= 'SELECT * FROM News WHERE id IN ('+(','.join([str(elem) for elem in list_id]))+')'
+            sql_engine = create_engine(db_url)
+            query= 'SELECT * FROM news WHERE id IN ('+(','.join([str(elem) for elem in list_id]))+')'
             results = pd.read_sql_query(query,sql_engine)
             name = 'exported/'+datetime.now().strftime('%d-%m-%Y %H.%M ')+'news.csv'
             results.to_csv(os.path.join(basedir,name),index=False,sep=",")
@@ -232,6 +247,10 @@ class Summarize(Resource):
         parser.add_argument('news')
         args = parser.parse_args()
 
+        if args.news.lstrip() == '':
+            abort(400, description="News can't be empty")
+        elif len(args.news.split()) < 20:
+            abort(400, description="News to short")
         try:
 
             # caching news from db before call predict endpoint
@@ -249,17 +268,19 @@ class Summarize(Resource):
             "news": args.news
             })
             headers = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-api-key': '0fa082af97380ffdecee051edb6b0b80'
             }
 
             response = requests.request("POST", url, headers=headers, data=payload)
 
             json_data = json.loads(response.text)
-            new_news = News(inputNews=args.news,summarizedNews=json_data["summarized"])
+            output = "Intinyaa... "+json_data["summarized"]
+            new_news = News(inputNews=args.news,summarizedNews=output)
             db.session.add(new_news)
             db.session.commit()
         
-            return jsonify({'summarized': json_data["summarized"]})
+            return jsonify({'summarized': output})
 
 
         except Exception as e:
