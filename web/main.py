@@ -17,7 +17,7 @@ import pymysql
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
-db_url = 'mysql+pymysql://<username>:<password>@<host>/<table>'
+db_url = 'mysql+pymysql://<USERNAME>:<PASSWORD>@<HOST>/DB_NAME'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.secret_key = 'pukulenam'
@@ -92,6 +92,8 @@ def home():
 
 
             except Exception as e:
+                flash(str(e),"danger")
+                return render_template('index.html')
                 return 'There was an issue summarizing your news : '+str(e)
 
     else:
