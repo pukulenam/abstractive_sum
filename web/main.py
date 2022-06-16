@@ -3,10 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 import pandas as pd
 import os
-import googleapiclient.discovery
 import json
 import requests
-from google.api_core.client_options import ClientOptions
 from flask_restful import Resource, Api, reqparse
 import secrets
 from flask_marshmallow import Marshmallow
@@ -191,9 +189,8 @@ def edit(id):
 
 
 
-def require_appkey(view_function):
+def require_apikey(view_function):
     @wraps(view_function)
-    # the new, post-decoration function. Note *args and **kwargs here.
     def decorated_function(*args, **kwargs):
         key=Key.query.get_or_404(1)
         #if request.args.get('key') and request.args.get('key') == key:
@@ -205,7 +202,6 @@ def require_appkey(view_function):
 
 def require_passkey(view_function):
     @wraps(view_function)
-    # the new, post-decoration function. Note *args and **kwargs here.
     def decorated_function(*args, **kwargs):
         key=Key.query.get_or_404(1)
         #if request.args.get('key') and request.args.get('key') == key:
@@ -237,13 +233,13 @@ class Security(Resource):
     #         return {'status': str(e)}
     
 class Summarize(Resource):
-    @require_appkey
+    @require_apikey
     def get(self):
         query_news=News.query.order_by(News.id)
         news = NewsSchema(many=True).dump(query_news)
         return jsonify({'history': news})
 
-    @require_appkey
+    @require_apikey
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('news')
