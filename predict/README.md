@@ -33,7 +33,10 @@ python main.py
 
 ## API Request
 
-URL : [https://pukulenamapi-ntklgukjta-uc.a.run.app/api/summarize](https://pukulenamapi-ntklgukjta-uc.a.run.app/api/summarize) 
+URL : [https://predictapi-ntklgukjta-uc.a.run.app/api/summarize](https://predictapi-ntklgukjta-uc.a.run.app/api/summarize) 
+
+
+(Internal Traffic Only)
 
 Method : POST
 
@@ -51,7 +54,7 @@ var data = JSON.stringify({
 
 var config = {
   method: 'post',
-  url: 'https://pukulenamapi-ntklgukjta-uc.a.run.app/api/summarize',
+  url: 'https://predictapi-ntklgukjta-uc.a.run.app/api/summarize',
   headers: { 
     'Content-Type': 'application/json', 
     'x-api-key': '0fa082af97380ffdecee051edb6b0b80'
@@ -61,13 +64,9 @@ var config = {
 
 axios(config)
 .then(function (response) {
-  // get summarized news 
-  console.log(response.data.summarized)
+  console.log(JSON.stringify(response.data));
 })
 .catch(function (error) {
-  //   error code
-  console.log(error.code);
-  // eror message
-  console.log(error.response.data.message);
+  console.log(error);
 });
 ```
